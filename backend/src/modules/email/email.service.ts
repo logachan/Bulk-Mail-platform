@@ -55,7 +55,7 @@ export class EmailService {
     try {
       const attachments: any[] = [];
       if (resumeFilename) {
-        const filePath = path.join(process.cwd(), 'src', 'resumes', resumeFilename);
+        const filePath = path.join(process.cwd(), 'resumes', resumeFilename);
         if (fs.existsSync(filePath)) {
           attachments.push({
             filename: resumeFilename,
@@ -117,10 +117,14 @@ export class EmailService {
   }
 
   async getResumes() {
-    const resumesPath = path.join(process.cwd(), 'src', 'resumes');
+    const resumesPath = path.join(process.cwd(), 'resumes');
+    this.logger.log(`Checking for resumes in: ${resumesPath}`);
     if (!fs.existsSync(resumesPath)) {
+      this.logger.warn(`Resumes directory not found at: ${resumesPath}`);
       return [];
     }
-    return fs.readdirSync(resumesPath).filter(file => file.endsWith('.pdf'));
+    const files = fs.readdirSync(resumesPath).filter(file => file.endsWith('.pdf'));
+    this.logger.log(`Found ${files.length} resumes`);
+    return files;
   }
 }
